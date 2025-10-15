@@ -9,6 +9,97 @@
 Para el funcionamiento de esta práctica será necesario tener las librerías instaladas del proyecto base //TODO
 
 ## Tarea I
+### Pasos realizados en el código Python
+
+1. **Carga y preprocesamiento de la imagen**  
+   Se carga la imagen de monedas y se convierte a escala de grises. Luego, se aplica un filtro Gaussiano para suavizar la imagen y reducir el ruido.
+
+   ```python
+   coins = cv2.imread("Monedas7.jpg")
+   gray = cv2.cvtColor(coins, cv2.COLOR_BGR2GRAY)
+   blur = cv2.GaussianBlur(gray, (7,7), 0)
+   ```
+
+   **Ubicación de la imagen preprocesada:**
+   - Imagen suavizada: `Gaussian`
+
+2. **Detección de bordes y contornos**  
+   Se utiliza el detector de bordes de Canny para identificar los bordes en la imagen. Posteriormente, se encuentran los contornos y se filtran aquellos que no cumplen con criterios mínimos de área y circularidad.
+
+   ```python
+   canny = cv2.Canny(blur, 20, 255)
+   contours, hierarchy = cv2.findContours(canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+   ```
+
+   **Ubicación de la imagen con bordes detectados:**
+   - Imagen de bordes: `Canny`
+
+3. **Filtrado y clasificación inicial de contornos**  
+   Se calculan propiedades geométricas como el área y la circularidad para identificar contornos que correspondan a monedas. Los contornos válidos se dibujan en la imagen.
+
+   ```python
+   for cont in contours:
+       area = cv2.contourArea(cont)
+       if area > 800:
+           perimeter = cv2.arcLength(cont, True)
+           circularity = 4 * np.pi * area / (perimeter * perimeter)
+           if circularity > 0.6:
+               (x, y), radius = cv2.minEnclosingCircle(cont)
+               monedas.append({'center': (int(x), int(y)), 'radius': int(radius)})
+   ```
+
+   **Nota importante:**  
+   Existe un límite superior para el perímetro de los contornos que se consideran válidos. Este límite se establece para evitar que objetos demasiado grandes sean clasificados como monedas. En el código, se descartan contornos con un perímetro mayor a 800 píxeles, ya que en varias pruebas no hemos encontrado monedas superiores a ese tamaño, facilitando .
+
+   ```python
+   if perimeter < 800 and perimeter > 280:
+       circularity = 4 * np.pi * area / (perimeter * perimeter)
+   else:
+       circularity = 0
+   ```
+
+   **Ubicación de la imagen con monedas detectadas:**
+   - Imagen con círculos dibujados alrededor de las monedas.
+
+4. **Calibración con moneda de referencia**  
+   Se solicita al usuario identificar una moneda de referencia (por ejemplo, de 1€) para calcular la relación entre píxeles y milímetros. Esto permite estimar el tamaño real de las monedas detectadas.
+
+   ```python
+   def calibrar_con_moneda_referencia(monedas, id_moneda, valor_euro):
+       moneda_ref = monedas[id_moneda]
+       diametro_px = moneda_ref['diameter_px']
+       diametro_mm = diametros_mm[valor_euro]
+       pixel_per_mm = diametro_px / diametro_mm
+   ```
+
+5. **Clasificación de monedas y cálculo del total**  
+   Se clasifica cada moneda detectada comparando su diámetro estimado con los valores reales de las monedas en euros. Se calcula el total de dinero presente en la imagen.
+
+   ```python
+   for moneda in monedas:
+       diametro_mm = moneda['diameter_px'] / pixel_per_mm
+       for valor, diam_real in diametros_mm.items():
+           error = abs(diametro_mm - diam_real) / diam_real
+           if error < 0.10:
+               total += valor
+   ```
+
+   **Ubicación de la imagen con resultados finales:**
+   - Imagen con valores y total detectado.
+
+6. **Otras estrategias empleadas**
+    Se han intentado otra estrategia para discriminar las diferentes monedas: *el uso del color*. La motivación de intentar este método es para tener una segunda fuente de información para aquellas monedas de tamaños relativamente similares como las monedas de 2 y 10 céntimos, y que presentan una diferencia de color notable. Sin embargo, las implementaciones usadas proporcionaban resultados o incluso peores a las usadas que emplean únicamente la dimensión y forma de la moneda.
+
+7. **Importancia de la perspectiva**
+    La imagen última y empleada en el código ha permitido obtener un resultado totalmente correcto. Es debido a que se realiza verticalmente a una cierta distancia. La foto realizada de esta forma proporciona un doble beneficio. Primero, la mayor distancia ofrece una menor resolución, aunque pueda parecer contraintuitivo, ello permite que no se procese los detalles interiores que podrían confundir el procesamiento de la imagen.
+
+    **Ubicación de una imagen que tenga círculos internos:**
+   - Detección de detalles innecesarios y confusos.
+
+   En segundo lugar, la mayor distancia y el ángulo perpendicular sobre el plano en donde descansan las monedas reducen la distorsión de la perspectiva. Reducir esta distorsión es imperativo al ser el algoritmo visto previamente depende que las proporciones de las monedas sean adecuadas, especialmente de la moneda de 1 euro empleada como referencia para el resto.
+
+    **Ubicación de una imagen que sufra por la perspectiva:**
+   - Imagen con problemas por la perspectiva.
 
 ## Tarea II - Clasificación de microplásticos mediante características geométricas
 
