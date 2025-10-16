@@ -215,3 +215,4 @@ Este proyecto demuestra que el **preprocesamiento de imagen es tan crítico como
 - GeeksforGeeks. (2020). CLAHE Histogram Equalization - OpenCV. [https://www.geeksforgeeks.org/python/clahe-histogram-eqalization-opencv/](https://www.geeksforgeeks.org/python/clahe-histogram-eqalization-opencv/)
 
 ## Uso de IA
+Para la tarea 2, se hizo uso de Claude Sonnet 4.5 para separar en distintos métodos los procedimientos de calcular el IoU, extraer características, clasificar y procesar para poder ejecutarlos de manera ordenada y limpia. Además, fue de gran utilidad para la presentación de los datos en un mismo *output*, y para una mejor redacción del READme.
