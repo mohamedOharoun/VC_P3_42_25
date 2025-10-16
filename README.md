@@ -20,7 +20,7 @@ Para el funcionamiento de esta práctica será necesario tener las librerías in
    blur = cv2.GaussianBlur(gray, (7,7), 0)
    ```
 
-   **Ubicación de la imagen preprocesada:**
+   ![Resltado de la suavización Gaussiana](coins_images/gauss.png)
    - Imagen suavizada: `Gaussian`
 
 2. **Detección de bordes y contornos**  
@@ -31,7 +31,7 @@ Para el funcionamiento de esta práctica será necesario tener las librerías in
    contours, hierarchy = cv2.findContours(canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
    ```
 
-   **Ubicación de la imagen con bordes detectados:**
+   ![Bordes mediante Canny](coins_images/canny.png)
    - Imagen de bordes: `Canny`
 
 3. **Filtrado y clasificación inicial de contornos**  
@@ -58,7 +58,7 @@ Para el funcionamiento de esta práctica será necesario tener las librerías in
        circularity = 0
    ```
 
-   **Ubicación de la imagen con monedas detectadas:**
+   ![Detección de monedas](coins_images/coins_detected.png)
    - Imagen con círculos dibujados alrededor de las monedas.
 
 4. **Calibración con moneda de referencia**  
@@ -84,7 +84,7 @@ Para el funcionamiento de esta práctica será necesario tener las librerías in
                total += valor
    ```
 
-   **Ubicación de la imagen con resultados finales:**
+   ![Resultado final con la estimación](coins_images/final_result.png)
    - Imagen con valores y total detectado.
 
 6. **Otras estrategias empleadas**
@@ -93,12 +93,14 @@ Para el funcionamiento de esta práctica será necesario tener las librerías in
 7. **Importancia de la perspectiva**
     La imagen última y empleada en el código ha permitido obtener un resultado totalmente correcto. Es debido a que se realiza verticalmente a una cierta distancia. La foto realizada de esta forma proporciona un doble beneficio. Primero, la mayor distancia ofrece una menor resolución, aunque pueda parecer contraintuitivo, ello permite que no se procese los detalles interiores que podrían confundir el procesamiento de la imagen.
 
-    **Ubicación de una imagen que tenga círculos internos:**
+    Por ejemplo, en la siguiente imagen se comprueba que el globo dibujado en la moneda de 2 céntimos confunde el algoritmo.
+
+    ![Los detalles circulares complican el procesamiento, haciendo las imágenes de menor resolución más atractivas](coins_images/details_problem.png)
    - Detección de detalles innecesarios y confusos.
 
    En segundo lugar, la mayor distancia y el ángulo perpendicular sobre el plano en donde descansan las monedas reducen la distorsión de la perspectiva. Reducir esta distorsión es imperativo al ser el algoritmo visto previamente depende que las proporciones de las monedas sean adecuadas, especialmente de la moneda de 1 euro empleada como referencia para el resto.
 
-    **Ubicación de una imagen que sufra por la perspectiva:**
+    ![Los problemas de perspectiva no permiten calcular la relación correcta con la moneda de referencia](coins_images/perspective_problem.png.png)
    - Imagen con problemas por la perspectiva.
 
 ## Tarea II - Clasificación de microplásticos mediante características geométricas
@@ -215,4 +217,8 @@ Este proyecto demuestra que el **preprocesamiento de imagen es tan crítico como
 - GeeksforGeeks. (2020). CLAHE Histogram Equalization - OpenCV. [https://www.geeksforgeeks.org/python/clahe-histogram-eqalization-opencv/](https://www.geeksforgeeks.org/python/clahe-histogram-eqalization-opencv/)
 
 ## Uso de IA
-Para la tarea 2, se hizo uso de Claude Sonnet 4.5 para separar en distintos métodos los procedimientos de calcular el IoU, extraer características, clasificar y procesar para poder ejecutarlos de manera ordenada y limpia. Además, fue de gran utilidad para la presentación de los datos en un mismo *output*, y para una mejor redacción del READme.
+Para la tarea 1, se empleo Claude Sonnet 4.5 para la realización o propuesta base de los diferentes *Code Cells*, especialmente en relación en aquellos de cómo calcular el contorno. También se empleó para adaptar la estrategia para que tenga en cuenta el color, pero con resultados deficientes.
+
+Para la tarea 2, también se hizo uso de Claude Sonnet 4.5 para separar en distintos métodos los procedimientos de calcular el IoU, extraer características, clasificar y procesar para poder ejecutarlos de manera ordenada y limpia. 
+
+Además, de forma general, fue de gran utilidad para la presentación de los datos en un mismo *output*, y para una mejor redacción del READme.
